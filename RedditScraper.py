@@ -4,21 +4,16 @@ import random
 reddit = praw.Reddit(client_id='PCmcnNNH7TMSsQ', client_secret='JZ8D4ZvsQprgPmUZvxV1oWq8QyE1wg', user_agent='Reddit Web Scraper')
 
 # get 10 hot posts from the MachineLearning subreddit
-try:
-    hot_posts = reddit.subreddit('Jokes').hot(limit=15)
 
-    posts = {}
+hot_posts = reddit.subreddit('UpliftingNews').hot(limit=20)
 
-    for post in hot_posts:
-        if post.stickied:
-            continue
-        posts[post.title] = post.selftext
+posts = {}
 
-    title, body = random.choice(list(posts.items()))
-    print(title)
-    print("---------------------------------------------------------")
-    print(body)
+for post in hot_posts:
+    # if post.stickied:
+    #     continue
+    posts[post.title] = post.url
 
-except:
-    print("Subreddit not found")
-
+title, url = random.choice(list(posts.items()))
+print(title)
+print(url)
