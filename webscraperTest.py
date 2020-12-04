@@ -1,44 +1,28 @@
 # make sure to install BeautifulSoup first before running
-from urllib.request import urlopen # urlopen to grab site pages to scrape
+from urllib.request import Request, urlopen # urlopen to grab site pages to scrape
 from bs4 import BeautifulSoup as soup # BeautifulSoup to create bs4 url objects
 import time
 import re
 
-sites = ['https://www.aria.co.uk/Products?search=3060+ti&p_style=list&p=cF9zdHlsZT1kZXRhaWwmcF9wcm9kdWN0c1BlclBhZ2U9MjAwJg=='
+sites = ['https://www.scan.co.uk/shop/gaming/gpu-nvidia/3175/3176/3177/3221#filter=1&categories=3221%7C3177%7C3176'
          ]
 
 site_count = len(sites) # counts total URLs in 'sites' list
 
-# function to search and find item details from HTML details passed to it, and handles below error
+# function to handle below error, and gets text and strips extra spaces
 # AttributeError: 'NoneType' object has no attribute 'html'
-def search_2(items, tag, selector):
-    # .find() function to find specific item details passed to it
-    container = items.find(tag, selector)
-    if container is not None: # checks if container is a NoneType
-        info = container.text.strip() # gets text and strips extra spaces
+def handle(find):
+    if find is not None: # checks if container is a NoneType
+        info = find.text.strip() # gets text and strips extra spaces
     else:
         info = "" # if NoneType, replace with empty string
     return info
 
-# function to search and find item details from HTML details passed to it, and handles below error
-# AttributeError: 'NoneType' object has no attribute 'html'
-def search(items, tag, selector, name):
-    # .find() function to find specific item details passed to it
-    container = items.find(tag, {selector: name})
-    if container is not None: # checks if container is a NoneType
-        info = container.text.strip() # gets text and strips extra spaces
-    else:
-        info = "" # if NoneType, replace with empty string
-    return info
-
-# function to search and find url from HTML details passed to it, and handles below error
+# function to handle below error specifically for URLs
 # AttributeError: 'NoneType' object
-def url_search(items, tag, selector):
-    # .find() function to find specific item details passed to it
-    # uses regex to compile a pattern object
-    container = items.find(tag, {selector: re.compile("^http")})
-    if container is not None: # checks if container is a NoneType
-        link = container.get('href') # gets url
+def url_handle(url):
+    if url is not None: # checks if container is a NoneType
+        link = url.get('href') # gets url
     else:
         link = "" # if NoneType, replace with empty string
     return link
@@ -47,12 +31,13 @@ header = False # initialised a False to write csv header once
 counter = 0  # counts 'for' loop cycle
 
 for url in sites: # loops for every url in the 'sites' list
-    client = urlopen(url) # opens connection and grabs the url
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    client = urlopen(req) # opens connection and grabs the url
     page = client.read() # reads page
     page_soup = soup(page, "html.parser") # html parser
 
     # grabs each product
-    items = page_soup.findAll("class", "listTableTr")
+    items = page_soup.findAll("li", {'class':'product'})
 
     # writes csv file and appends every loop cycle
     with open("GPUs.csv", "a") as file:
@@ -65,16 +50,16 @@ for url in sites: # loops for every url in the 'sites' list
         for item in items:
             # calls pre-defined search() function
             # all parameters passed below were manually identified and extracted from the website HTML code
-            name = search_2(item, "a", "href")
-            price = search(item, "span", "class", "price bold")
-            add_unav = search_2(item, "img", "title")
-            page_url = url_search(item, "a", "href")
+            brand = item.find("data-description")
+            print(brand)
+            # brand = handle(find_brand)
+            # name =
+            # price =
+            # basket =
+            # page_url = url_search(item, "a", "href")
 
             # write to csv file
-            file.write(name + "," +
-                       price + "," +
-                       add_unav + "," +
-                       page_url + "\n")
+            # file.write(brand + "\n")
 
     counter += 1
     print(f"Site ", str(counter), "of ", str(site_count), "scanned.") # displays progress
