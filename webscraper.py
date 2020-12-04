@@ -4,9 +4,6 @@ from bs4 import BeautifulSoup as soup # BeautifulSoup to create bs4 url objects
 import time
 import re
 
-# create column for website
-# add in aria, overclockers UK
-
 sites = ['https://www.currys.co.uk/gbuk/search-keywords/xx_xx_30343_xx_xx/3060%2Bti/xx-criteria.html',
          'https://www.currys.co.uk/gbuk/search-keywords/xx_xx_30343_xx_xx/3070/xx-criteria.html',
          'https://www.currys.co.uk/gbuk/search-keywords/xx_xx_30343_xx_xx/3080/xx-criteria.html'
