@@ -5,7 +5,7 @@ reddit = praw.Reddit(client_id='PCmcnNNH7TMSsQ', client_secret='JZ8D4ZvsQprgPmUZ
 
 # get 10 hot posts from the MachineLearning subreddit
 
-hot_posts = reddit.subreddit('UpliftingNews').hot(limit=20)
+hot_posts = reddit.subreddit('Memes').hot(limit=20)
 
 posts = {}
 
@@ -15,5 +15,3 @@ for post in hot_posts:
     posts[post.title] = post.url
 
 title, url = random.choice(list(posts.items()))
-print(title)
-print(url)
